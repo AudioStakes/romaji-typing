@@ -1,4 +1,4 @@
-const CACHE_NAME = "romajiuchi-v1";
+const CACHE_NAME = "romajiuchi-v2";
 
 const ASSETS_TO_CACHE = [
   "./",
@@ -48,9 +48,6 @@ self.addEventListener("fetch", (event) => {
 
   event.respondWith((async () => {
     const cache = await caches.open(CACHE_NAME);
-    const cachedResponse = await cache.match(event.request);
-    if (cachedResponse) return cachedResponse;
-
     try {
       const networkResponse = await fetch(event.request);
       if (networkResponse && networkResponse.ok) {
@@ -58,6 +55,8 @@ self.addEventListener("fetch", (event) => {
       }
       return networkResponse;
     } catch (_error) {
+      const cachedResponse = await cache.match(event.request);
+      if (cachedResponse) return cachedResponse;
       if (event.request.mode === "navigate") {
         const cachedRoot = await cache.match("./index.html") || await cache.match("./");
         if (cachedRoot) return cachedRoot;

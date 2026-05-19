@@ -295,8 +295,7 @@ function createLetterKey(key) {
   button.className = "key";
   button.dataset.key = key;
   button.textContent = key;
-  button.addEventListener("pointerdown", (event) => {
-    event.preventDefault();
+  button.addEventListener("click", () => {
     handleLetterInput(key, button);
   });
   return button;
@@ -323,8 +322,8 @@ function createRomajiProgressHtml(romaji, typedLength) {
   ].join("");
 }
 
-async function handleLetterInput(key, button) {
-  await unlockAudio();
+function handleLetterInput(key, button) {
+  void unlockAudio();
   if (game.isInputLocked) return;
   processTypedLetter(key, button);
 }
