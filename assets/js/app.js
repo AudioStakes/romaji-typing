@@ -447,11 +447,13 @@ function hasMovingTextReachedGoal() {
 function startTextAnimation() {
   cancelAnimationFrame(game.animationFrameId);
   const animate = (time) => {
-    advanceMovingText(time);
-    if (hasMovingTextReachedGoal()) {
-      handleMissedLesson();
-    } else {
-      updateMovingTextPosition();
+    if (!game.isInputLocked) {
+      advanceMovingText(time);
+      if (hasMovingTextReachedGoal()) {
+        handleMissedLesson();
+      } else {
+        updateMovingTextPosition();
+      }
     }
     game.animationFrameId = requestAnimationFrame(animate);
   };
