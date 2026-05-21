@@ -313,7 +313,6 @@ function renderGame() {
   dom.streakCount.textContent = game.streak;
   dom.bestCount.textContent = game.bestStreak;
   updateMovingTextPosition();
-  updateRotateHintLayout();
 }
 
 function createRomajiProgressHtml(romaji, typedLength) {
