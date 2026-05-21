@@ -47,6 +47,8 @@ body {
   min-height: 0;
   overflow: hidden;
   background: var(--color-keyboard-bg);
+  container-type: inline-size;
+  container-name: app;
 }
 
 main {
@@ -73,7 +75,7 @@ main {
   position: relative;
   overflow: hidden;
   min-width: 0;
-  height: clamp(44px, 12vw, 62px);
+  height: clamp(44px, 12cqi, 62px);
   background: var(--color-panel-bg);
 }
 
@@ -97,7 +99,7 @@ main {
 }
 
 .japanese {
-  font-size: clamp(18px, 5.4vw, 30px);
+  font-size: clamp(18px, 5.4cqi, 30px);
   line-height: 1;
   letter-spacing: .04em;
 }
@@ -106,7 +108,7 @@ main {
   min-width: 0;
   overflow: hidden;
   color: var(--color-muted-romaji);
-  font-size: clamp(16px, 4.8vw, 28px);
+  font-size: clamp(16px, 4.8cqi, 28px);
   letter-spacing: .1em;
   text-overflow: ellipsis;
 }
@@ -160,7 +162,7 @@ main {
   column-gap: 1px;
   padding: 0;
   color: var(--color-text);
-  font-size: clamp(10px, 2.8vw, 13px);
+  font-size: clamp(10px, 2.8cqi, 13px);
   font-weight: 800;
   line-height: 1.05;
   white-space: nowrap;
@@ -181,7 +183,7 @@ main {
 .score-effect {
   position: fixed;
   z-index: 20;
-  font-size: clamp(18px, 5vw, 28px);
+  font-size: clamp(18px, 5cqi, 28px);
   font-weight: 1000;
   line-height: 1;
   pointer-events: none;
@@ -195,7 +197,7 @@ main {
 
 .score-effect.new-best {
   color: #f59e0b;
-  font-size: clamp(14px, 3.8vw, 22px);
+  font-size: clamp(14px, 3.8cqi, 22px);
   text-shadow: 0 2px 0 #ffffff, 0 0 12px rgba(245, 158, 11, .35), 0 8px 18px rgba(245, 158, 11, .22);
   animation: newBestPop 920ms ease-out forwards;
 }
@@ -464,7 +466,7 @@ button.key[data-key="j"] {
   }
 
   button.key {
-    font-size: clamp(24px, 10cqi, 52px);
+    font-size: clamp(24px, 9cqi, 52px);
   }
 }
 
