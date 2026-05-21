@@ -429,7 +429,7 @@ function animateScoreEffect(effect, isNewBest) {
     const y = startY - rise * progress;
 
     effect.style.opacity = `${Math.max(0, Math.min(1, opacity))}`;
-    effect.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale}) rotate(${rotation}deg)`;
+    effect.style.transform = `translate3d(calc(-50% + ${x}px), ${y}px, 0) scale(${scale}) rotate(${rotation}deg)`;
 
     if (rawProgress < 1) {
       effect._scoreEffectFrame = requestAnimationFrame(step);
