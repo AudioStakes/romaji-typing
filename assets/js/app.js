@@ -85,6 +85,7 @@ function getDomElements() {
   const byId = (id) => document.getElementById(id);
   return {
     app: document.querySelector(".app"),
+    status: byId("gameStatus"),
     keyboardWrap: document.querySelector(".keyboard-wrap"),
     keyboard: byId("keyboard"),
     textLane: byId("textLane"),
@@ -96,6 +97,11 @@ function getDomElements() {
     bestCount: byId("bestCount"),
     rotateHint: document.querySelector(".rotate-hint")
   };
+}
+
+function announceStatus(message) {
+  if (!dom.status) return;
+  dom.status.textContent = message;
 }
 
 function createLessons(hepburnRomajiLessons) {
@@ -365,6 +371,7 @@ function completeCurrentLesson() {
   saveBestStreakIfNeeded();
   updateTextSpeed();
   playSound("lessonComplete");
+  announceStatus(isNewBest ? `正解。新記録です。連続 ${game.streak} 問。` : `正解。連続 ${game.streak} 問。`);
   renderGame();
   setTimeout(startNextLesson, GAME_SETTINGS.nextLessonDelayMs);
 }
@@ -397,6 +404,7 @@ function handleMissedLesson() {
   playSound("missedLesson");
   vibrateOnMissedLesson();
   showMissedLessonEffect();
+  announceStatus("時間切れ。連続記録をリセットして次のお題に進みます。");
   renderGame();
   setTimeout(startNextLesson, GAME_SETTINGS.missedLessonEffectMs);
 }
@@ -415,6 +423,7 @@ function startNextLesson() {
   game.isInputLocked = false;
   resetMovingText();
   renderGame();
+  announceStatus(`次のお題。${lessons[game.lessonIndex].japanese}。${game.displayedRomaji} を入力してください。`);
 }
 
 function updateTextSpeed() {
@@ -574,6 +583,7 @@ function startGame() {
   buildKeyboard();
   resetMovingText();
   renderGame();
+  announceStatus(`お題は ${lessons[game.lessonIndex].japanese}。${lessons[game.lessonIndex].displayRomaji} を入力してください。`);
   startTextAnimation();
   registerServiceWorker();
   document.addEventListener("keydown", handlePhysicalKeyboardInput);

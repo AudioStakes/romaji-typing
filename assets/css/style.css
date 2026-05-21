@@ -15,6 +15,8 @@
   --color-danger-border: #fecdd3;
   --color-danger-edge: #fda4af;
   --color-muted-romaji: rgba(15, 23, 42, .34);
+  --color-focus-ring: #2563eb;
+  color-scheme: light dark;
 }
 
 * {
@@ -53,6 +55,18 @@ main {
   display: grid;
   grid-template-rows: auto minmax(0, 1fr);
   background: var(--color-keyboard-bg);
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 .prompt-line {
@@ -291,6 +305,11 @@ button.key {
   touch-action: manipulation;
 }
 
+button.key:focus-visible {
+  outline: 4px solid var(--color-focus-ring);
+  outline-offset: 2px;
+}
+
 button.key:active,
 button.key.active {
   transform: translateY(6px);
@@ -445,5 +464,60 @@ button.key[data-key="j"] {
 
   button.key {
     font-size: clamp(24px, 10vh, 52px);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-panel-bg: #0f172a;
+    --color-key-bg: #111827;
+    --color-key-active-bg: #052e16;
+    --color-key-wrong-bg: #3f1d24;
+    --color-key-edge: #1e293b;
+    --color-key-border: #334155;
+    --color-key-highlight: rgba(255, 255, 255, .08);
+    --color-keyboard-bg: #020617;
+    --color-text: #e2e8f0;
+    --color-accent: #60a5fa;
+    --color-success: #4ade80;
+    --color-success-border: #14532d;
+    --color-danger-text: #fecdd3;
+    --color-danger-border: #7f1d1d;
+    --color-danger-edge: #4c1d1d;
+    --color-muted-romaji: rgba(226, 232, 240, .42);
+    --color-focus-ring: #93c5fd;
+  }
+
+  .score-effect.plus-one {
+    text-shadow: 0 2px 0 #020617, 0 6px 12px rgba(74, 222, 128, .18);
+  }
+
+  .score-effect.new-best {
+    text-shadow: 0 2px 0 #020617, 0 0 12px rgba(245, 158, 11, .28), 0 8px 18px rgba(245, 158, 11, .14);
+  }
+
+  .rotate-hint,
+  .japanese,
+  .romaji-target,
+  .score-pill {
+    text-shadow: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .app.missed::after,
+  .app.missed .moving-text,
+  .app.missed .keyboard,
+  .score-effect {
+    animation: none !important;
   }
 }

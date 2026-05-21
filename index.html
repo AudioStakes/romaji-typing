@@ -3,8 +3,10 @@
 
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, user-scalable=no" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
   <meta name="theme-color" content="#f1f5f9" />
+  <meta name="theme-color" media="(prefers-color-scheme: dark)" content="#020617" />
+  <meta name="color-scheme" content="light dark" />
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-title" content="ローマ字うち" />
@@ -25,6 +27,8 @@
 <body>
   <div class="app">
     <main>
+      <h1 class="sr-only">ローマ字うち</h1>
+      <p class="sr-only" id="gameStatus" aria-live="polite" aria-atomic="true"></p>
       <section class="prompt-line" id="textLane">
         <div class="moving-text" id="movingText">
           <div class="japanese" id="japanese">さくら</div>
