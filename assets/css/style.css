@@ -219,18 +219,19 @@ main {
 .rotate-hint {
   position: absolute;
   left: 50%;
-  top: var(--rotate-hint-top, 12px);
+  top: var(--rotate-hint-top, 18px);
   z-index: 3;
   display: grid;
-  gap: 4px;
-  width: min(92vw, 640px);
+  gap: 6px;
+  width: min(96vw, 760px);
+  padding-inline: 16px;
   color: var(--color-text);
-  font-size: clamp(8px, 2.6cqi, 12px);
+  font-size: clamp(20px, 5.4vw, 28px);
   font-weight: 900;
-  line-height: 1;
+  line-height: 1.15;
   text-align: center;
   pointer-events: none;
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
   text-shadow: 0 2px 0 #ffffff, 0 6px 16px rgba(15, 23, 42, .18);
 }
 
