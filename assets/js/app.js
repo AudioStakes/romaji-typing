@@ -380,10 +380,20 @@ function showScoreEffect(isNewBest) {
   const effect = document.createElement("div");
   effect.className = `score-effect ${isNewBest ? "new-best" : "plus-one"}`;
   effect.textContent = isNewBest ? "🏆 Best" : "+1";
+  effect.setAttribute("aria-hidden", "true");
+  effect.setAttribute("role", "presentation");
   effect.style.left = `${scoreRect.left + scoreRect.width / 2}px`;
   effect.style.top = `${Math.max(10, scoreRect.top + 4)}px`;
   document.body.appendChild(effect);
+  if (prefersReducedMotion()) {
+    effect.remove();
+    return;
+  }
   animateScoreEffect(effect, isNewBest);
+}
+
+function prefersReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 }
 
 function animateScoreEffect(effect, isNewBest) {
@@ -391,7 +401,7 @@ function animateScoreEffect(effect, isNewBest) {
   const startTime = performance.now();
   const startX = 0;
   const startY = 0;
-  const lift = isNewBest ? -22 : -16;
+  const rise = isNewBest ? 22 : 16;
   const drift = isNewBest ? -92 : -72;
   const scaleStart = isNewBest ? 0.68 : 0.76;
   const scalePeak = isNewBest ? 1.28 : 1.14;
@@ -416,7 +426,7 @@ function animateScoreEffect(effect, isNewBest) {
         ? 1 - (rawProgress - 0.75) / 0.25
         : 1;
     const x = startX + drift * progress;
-    const y = Math.max(4, startY + lift * progress);
+    const y = startY - rise * progress;
 
     effect.style.opacity = `${Math.max(0, Math.min(1, opacity))}`;
     effect.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale}) rotate(${rotation}deg)`;

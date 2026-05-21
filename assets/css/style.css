@@ -188,7 +188,7 @@ main {
   align-items: center;
   justify-content: center;
   white-space: nowrap;
-  font-size: clamp(18px, 5cqi, 28px);
+  font-size: clamp(18px, 5vw, 28px);
   font-weight: 1000;
   line-height: 1;
   pointer-events: none;
@@ -201,7 +201,7 @@ main {
 
 .score-effect.new-best {
   color: #f59e0b;
-  font-size: clamp(14px, 3.8cqi, 22px);
+  font-size: clamp(14px, 3.8vw, 22px);
   text-shadow: 0 2px 0 #ffffff, 0 0 12px rgba(245, 158, 11, .35), 0 8px 18px rgba(245, 158, 11, .22);
 }
 
@@ -417,7 +417,7 @@ button.key[data-key="j"] {
   }
 }
 
-@container keyboard (min-width: 520px) {
+@container app (min-width: 520px) {
   .rotate-hint {
     display: none;
   }
