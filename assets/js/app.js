@@ -94,8 +94,7 @@ function getDomElements() {
     romajiTarget: byId("romajiTarget"),
     scoreMask: byId("scoreMask"),
     streakCount: byId("streakCount"),
-    bestCount: byId("bestCount"),
-    rotateHint: document.querySelector(".rotate-hint")
+    bestCount: byId("bestCount")
   };
 }
 
@@ -440,30 +439,6 @@ function updateMovingTextPosition() {
   dom.movingText.style.transform = `translate(${game.movingTextX}px, -50%)`;
 }
 
-function updateRotateHintLayout() {
-  if (!dom.rotateHint) return;
-
-  const firstKeyboardRow = dom.keyboard.querySelector(".row");
-  const firstKey = dom.keyboard.querySelector("button.key");
-  if (!firstKeyboardRow || !firstKey) return;
-
-  const wrapRect = dom.keyboardWrap.getBoundingClientRect();
-  const firstRowRect = firstKeyboardRow.getBoundingClientRect();
-  const firstKeyRect = firstKey.getBoundingClientRect();
-  const availableHeight = Math.max(0, firstRowRect.top - wrapRect.top - 4);
-  const keyAspectRatio = firstKeyRect.height / firstKeyRect.width;
-  const isKeyTooTall = keyAspectRatio >= 1.08;
-  const hasEnoughSpace = availableHeight >= 24;
-  const shouldShow = isKeyTooTall && hasEnoughSpace;
-  const flowingTextSize = parseFloat(getComputedStyle(dom.japanese).fontSize) || 24;
-  const fontSize = Math.min(flowingTextSize * 0.9, Math.max(6, availableHeight / 5.8));
-  const hintTop = Math.max(availableHeight / 2, 10);
-
-  dom.rotateHint.style.setProperty("--rotate-hint-top", `${hintTop}px`);
-  dom.rotateHint.style.setProperty("--rotate-hint-font-size", `${fontSize}px`);
-  dom.rotateHint.style.setProperty("--rotate-hint-opacity", shouldShow ? "1" : "0");
-}
-
 function hasMovingTextReachedGoal() {
   const goalLineX = dom.textLane.clientWidth - dom.scoreMask.offsetWidth;
   const movingTextTriggerX = game.movingTextX + dom.movingText.offsetWidth * GAME_SETTINGS.goalTriggerTextRatio;
@@ -587,8 +562,6 @@ function startGame() {
   startTextAnimation();
   registerServiceWorker();
   document.addEventListener("keydown", handlePhysicalKeyboardInput);
-  window.addEventListener("resize", updateRotateHintLayout);
-  window.addEventListener("orientationchange", () => setTimeout(updateRotateHintLayout, 120));
 }
 
 startGame();
