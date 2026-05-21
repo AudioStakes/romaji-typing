@@ -184,11 +184,14 @@ main {
   position: fixed;
   z-index: 20;
   will-change: transform, opacity, filter;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
   font-size: clamp(18px, 5cqi, 28px);
   font-weight: 1000;
   line-height: 1;
   pointer-events: none;
-  animation: scoreEffectFloat 560ms cubic-bezier(.2, .85, .15, 1) forwards;
 }
 
 .score-effect.plus-one {
@@ -200,7 +203,6 @@ main {
   color: #f59e0b;
   font-size: clamp(14px, 3.8cqi, 22px);
   text-shadow: 0 2px 0 #ffffff, 0 0 12px rgba(245, 158, 11, .35), 0 8px 18px rgba(245, 158, 11, .22);
-  animation: newBestPop 650ms cubic-bezier(.2, .9, .12, 1) forwards;
 }
 
 .keyboard-wrap {
@@ -358,50 +360,6 @@ button.key[data-key="j"] {
 
 .app.missed .keyboard {
   animation: missKeyboardShake 280ms ease-out;
-}
-
-@keyframes scoreEffectFloat {
-  0% {
-    opacity: 0;
-    transform: translate(calc(-50% - 4px), 10px) scale(.72);
-  }
-
-  18% {
-    opacity: 1;
-    transform: translate(calc(-50% - 10px), -2px) scale(1.08);
-  }
-
-  58% {
-    opacity: .92;
-    transform: translate(calc(-50% - 18px), -26px) scale(1.02);
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate(calc(-50% - 28px), -58px) scale(.96);
-  }
-}
-
-@keyframes newBestPop {
-  0% {
-    opacity: 0;
-    transform: translate(calc(-50% - 8px), 12px) scale(.66) rotate(-8deg);
-  }
-
-  18% {
-    opacity: 1;
-    transform: translate(calc(-50% - 12px), -1px) scale(1.22) rotate(4deg);
-  }
-
-  52% {
-    opacity: 1;
-    transform: translate(calc(-50% - 20px), -28px) scale(1.03) rotate(-2deg);
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate(calc(-50% - 32px), -68px) scale(.94) rotate(0deg);
-  }
 }
 
 @keyframes missFlash {

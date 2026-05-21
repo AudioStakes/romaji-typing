@@ -380,11 +380,57 @@ function showScoreEffect(isNewBest) {
   const effect = document.createElement("div");
   effect.className = `score-effect ${isNewBest ? "new-best" : "plus-one"}`;
   effect.textContent = isNewBest ? "🏆 Best" : "+1";
-  const horizontalOffset = isNewBest ? -28 : 0;
-  effect.style.left = `${scoreRect.left + scoreRect.width / 2 + horizontalOffset}px`;
-  effect.style.top = `${scoreRect.top - 4}px`;
+  effect.style.left = `${scoreRect.left + scoreRect.width / 2}px`;
+  effect.style.top = `${Math.max(10, scoreRect.top + 4)}px`;
   document.body.appendChild(effect);
-  effect.addEventListener("animationend", () => effect.remove(), { once: true });
+  animateScoreEffect(effect, isNewBest);
+}
+
+function animateScoreEffect(effect, isNewBest) {
+  const duration = isNewBest ? 720 : 600;
+  const startTime = performance.now();
+  const startX = 0;
+  const startY = 0;
+  const lift = isNewBest ? -22 : -16;
+  const drift = isNewBest ? -92 : -72;
+  const scaleStart = isNewBest ? 0.68 : 0.76;
+  const scalePeak = isNewBest ? 1.28 : 1.14;
+  const scaleEnd = isNewBest ? 0.95 : 0.96;
+  const rotateStart = isNewBest ? -10 : -6;
+  const rotatePeak = isNewBest ? 6 : 2;
+
+  const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+
+  const step = (now) => {
+    const rawProgress = Math.min(1, (now - startTime) / duration);
+    const progress = easeOutCubic(rawProgress);
+    const scale = rawProgress < 0.4
+      ? scaleStart + (scalePeak - scaleStart) * (rawProgress / 0.4)
+      : scalePeak + (scaleEnd - scalePeak) * ((rawProgress - 0.4) / 0.6);
+    const rotation = rawProgress < 0.4
+      ? rotateStart + (rotatePeak - rotateStart) * (rawProgress / 0.4)
+      : rotatePeak * (1 - (rawProgress - 0.4) / 0.6);
+    const opacity = rawProgress < 0.12
+      ? rawProgress / 0.12
+      : rawProgress > 0.75
+        ? 1 - (rawProgress - 0.75) / 0.25
+        : 1;
+    const x = startX + drift * progress;
+    const y = Math.max(4, startY + lift * progress);
+
+    effect.style.opacity = `${Math.max(0, Math.min(1, opacity))}`;
+    effect.style.transform = `translate3d(${x}px, ${y}px, 0) scale(${scale}) rotate(${rotation}deg)`;
+
+    if (rawProgress < 1) {
+      effect._scoreEffectFrame = requestAnimationFrame(step);
+    } else {
+      effect.remove();
+    }
+  };
+
+  effect.style.opacity = "0";
+  effect.style.transform = `translate3d(0px, ${startY}px, 0) scale(${scaleStart}) rotate(${rotateStart}deg)`;
+  effect._scoreEffectFrame = requestAnimationFrame(step);
 }
 
 function saveBestStreakIfNeeded() {
