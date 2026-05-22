@@ -15,6 +15,8 @@
   --color-danger-border: #fecdd3;
   --color-danger-edge: #fda4af;
   --color-muted-romaji: rgba(15, 23, 42, .34);
+  --color-focus-ring: #2563eb;
+  color-scheme: light dark;
 }
 
 * {
@@ -45,6 +47,8 @@ body {
   min-height: 0;
   overflow: hidden;
   background: var(--color-keyboard-bg);
+  container-type: inline-size;
+  container-name: app;
 }
 
 main {
@@ -55,11 +59,24 @@ main {
   background: var(--color-keyboard-bg);
 }
 
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
 .prompt-line {
   position: relative;
   overflow: hidden;
   min-width: 0;
   height: clamp(44px, 12vw, 62px);
+  height: clamp(44px, 12cqi, 62px);
   background: var(--color-panel-bg);
 }
 
@@ -84,6 +101,7 @@ main {
 
 .japanese {
   font-size: clamp(18px, 5.4vw, 30px);
+  font-size: clamp(18px, 5.4cqi, 30px);
   line-height: 1;
   letter-spacing: .04em;
 }
@@ -93,6 +111,7 @@ main {
   overflow: hidden;
   color: var(--color-muted-romaji);
   font-size: clamp(16px, 4.8vw, 28px);
+  font-size: clamp(16px, 4.8cqi, 28px);
   letter-spacing: .1em;
   text-overflow: ellipsis;
 }
@@ -147,6 +166,7 @@ main {
   padding: 0;
   color: var(--color-text);
   font-size: clamp(10px, 2.8vw, 13px);
+  font-size: clamp(10px, 2.8cqi, 13px);
   font-weight: 800;
   line-height: 1.05;
   white-space: nowrap;
@@ -167,11 +187,15 @@ main {
 .score-effect {
   position: fixed;
   z-index: 20;
+  will-change: transform, opacity;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
   font-size: clamp(18px, 5vw, 28px);
   font-weight: 1000;
   line-height: 1;
   pointer-events: none;
-  animation: scoreEffectFloat 720ms ease-out forwards;
 }
 
 .score-effect.plus-one {
@@ -183,7 +207,6 @@ main {
   color: #f59e0b;
   font-size: clamp(14px, 3.8vw, 22px);
   text-shadow: 0 2px 0 #ffffff, 0 0 12px rgba(245, 158, 11, .35), 0 8px 18px rgba(245, 158, 11, .22);
-  animation: newBestPop 920ms ease-out forwards;
 }
 
 .keyboard-wrap {
@@ -193,24 +216,26 @@ main {
   min-height: 0;
   overflow: hidden;
   align-items: stretch;
+  container-type: inline-size;
+  container-name: keyboard;
 }
 
 .rotate-hint {
   position: absolute;
   left: 50%;
-  top: var(--rotate-hint-top, 12px);
+  top: var(--rotate-hint-top, 18px);
   z-index: 3;
   display: grid;
-  gap: 4px;
-  width: min(92vw, 640px);
+  gap: 6px;
+  width: min(96vw, 760px);
+  padding-inline: 16px;
   color: var(--color-text);
-  font-size: var(--rotate-hint-font-size, 10px);
+  font-size: clamp(20px, 5.4vw, 28px);
   font-weight: 900;
-  line-height: 1;
+  line-height: 1.15;
   text-align: center;
   pointer-events: none;
-  opacity: var(--rotate-hint-opacity, 1);
-  transform: translate(-50%, -50%);
+  transform: translateX(-50%);
   text-shadow: 0 2px 0 #ffffff, 0 6px 16px rgba(15, 23, 42, .18);
 }
 
@@ -236,8 +261,10 @@ main {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  gap: 6px;
-  padding: 6px;
+  gap: clamp(4px, 1.4vw, 6px);
+  gap: clamp(4px, 1.4cqi, 6px);
+  padding: clamp(4px, 1.4vw, 6px);
+  padding: clamp(4px, 1.4cqi, 6px);
   overflow: hidden;
   background: var(--color-keyboard-bg);
 }
@@ -249,7 +276,7 @@ main {
   min-width: 0;
   min-height: 0;
   width: 100%;
-  gap: 6px;
+  gap: clamp(4px, 1.4cqi, 6px);
 }
 
 .row-10 {
@@ -289,6 +316,11 @@ button.key {
   font-size: clamp(26px, 7.6vw, 42px);
   font-weight: 900;
   touch-action: manipulation;
+}
+
+button.key:focus-visible {
+  outline: 4px solid var(--color-focus-ring);
+  outline-offset: 2px;
 }
 
 button.key:active,
@@ -335,44 +367,6 @@ button.key[data-key="j"] {
 
 .app.missed .keyboard {
   animation: missKeyboardShake 280ms ease-out;
-}
-
-@keyframes scoreEffectFloat {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, 8px) scale(.82);
-  }
-
-  18% {
-    opacity: 1;
-    transform: translate(-50%, 0) scale(1.08);
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -34px) scale(1);
-  }
-}
-
-@keyframes newBestPop {
-  0% {
-    opacity: 0;
-    transform: translate(-50%, 10px) scale(.72) rotate(-6deg);
-  }
-
-  18% {
-    opacity: 1;
-    transform: translate(-50%, -2px) scale(1.22) rotate(3deg);
-  }
-
-  42% {
-    transform: translate(-50%, -12px) scale(1) rotate(-2deg);
-  }
-
-  100% {
-    opacity: 0;
-    transform: translate(-50%, -46px) scale(.96) rotate(0deg);
-  }
 }
 
 @keyframes missFlash {
@@ -429,7 +423,11 @@ button.key[data-key="j"] {
   }
 }
 
-@media (orientation: landscape) {
+@container app (min-width: 520px) {
+  .rotate-hint {
+    display: none;
+  }
+
   .prompt-line {
     min-height: 38px;
     padding: 5px 10px;
@@ -437,13 +435,66 @@ button.key[data-key="j"] {
 
   .row {
     max-height: clamp(72px, 31vh, 150px);
-  }
-
-  .rotate-hint {
-    display: none;
+    max-height: clamp(72px, 31cqi, 150px);
   }
 
   button.key {
     font-size: clamp(24px, 10vh, 52px);
+    font-size: clamp(24px, 9cqi, 52px);
+  }
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --color-panel-bg: #0f172a;
+    --color-key-bg: #111827;
+    --color-key-active-bg: #052e16;
+    --color-key-wrong-bg: #3f1d24;
+    --color-key-edge: #1e293b;
+    --color-key-border: #334155;
+    --color-key-highlight: rgba(255, 255, 255, .08);
+    --color-keyboard-bg: #020617;
+    --color-text: #e2e8f0;
+    --color-accent: #60a5fa;
+    --color-success: #4ade80;
+    --color-success-border: #14532d;
+    --color-danger-text: #fecdd3;
+    --color-danger-border: #7f1d1d;
+    --color-danger-edge: #4c1d1d;
+    --color-muted-romaji: rgba(226, 232, 240, .42);
+    --color-focus-ring: #93c5fd;
+  }
+
+  .score-effect.plus-one {
+    text-shadow: 0 2px 0 #020617, 0 6px 12px rgba(74, 222, 128, .18);
+  }
+
+  .score-effect.new-best {
+    text-shadow: 0 2px 0 #020617, 0 0 12px rgba(245, 158, 11, .28), 0 8px 18px rgba(245, 158, 11, .14);
+  }
+
+  .rotate-hint,
+  .japanese,
+  .romaji-target,
+  .score-pill {
+    text-shadow: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+  }
+
+  .app.missed::after,
+  .app.missed .moving-text,
+  .app.missed .keyboard,
+  .score-effect {
+    animation: none !important;
   }
 }

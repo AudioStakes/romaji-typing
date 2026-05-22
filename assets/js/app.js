@@ -85,6 +85,7 @@ function getDomElements() {
   const byId = (id) => document.getElementById(id);
   return {
     app: document.querySelector(".app"),
+    status: byId("gameStatus"),
     keyboardWrap: document.querySelector(".keyboard-wrap"),
     keyboard: byId("keyboard"),
     textLane: byId("textLane"),
@@ -93,9 +94,13 @@ function getDomElements() {
     romajiTarget: byId("romajiTarget"),
     scoreMask: byId("scoreMask"),
     streakCount: byId("streakCount"),
-    bestCount: byId("bestCount"),
-    rotateHint: document.querySelector(".rotate-hint")
+    bestCount: byId("bestCount")
   };
+}
+
+function announceStatus(message) {
+  if (!dom.status) return;
+  dom.status.textContent = message;
 }
 
 function createLessons(hepburnRomajiLessons) {
@@ -308,7 +313,6 @@ function renderGame() {
   dom.streakCount.textContent = game.streak;
   dom.bestCount.textContent = game.bestStreak;
   updateMovingTextPosition();
-  updateRotateHintLayout();
 }
 
 function createRomajiProgressHtml(romaji, typedLength) {
@@ -365,6 +369,7 @@ function completeCurrentLesson() {
   saveBestStreakIfNeeded();
   updateTextSpeed();
   playSound("lessonComplete");
+  announceStatus(isNewBest ? `正解。新記録です。連続 ${game.streak} 問。` : `正解。連続 ${game.streak} 問。`);
   renderGame();
   setTimeout(startNextLesson, GAME_SETTINGS.nextLessonDelayMs);
 }
@@ -375,11 +380,67 @@ function showScoreEffect(isNewBest) {
   const effect = document.createElement("div");
   effect.className = `score-effect ${isNewBest ? "new-best" : "plus-one"}`;
   effect.textContent = isNewBest ? "🏆 Best" : "+1";
-  const horizontalOffset = isNewBest ? -28 : 0;
-  effect.style.left = `${scoreRect.left + scoreRect.width / 2 + horizontalOffset}px`;
-  effect.style.top = `${scoreRect.top - 4}px`;
+  effect.setAttribute("aria-hidden", "true");
+  effect.setAttribute("role", "presentation");
+  effect.style.left = `${scoreRect.left + scoreRect.width / 2}px`;
+  effect.style.top = `${Math.max(10, scoreRect.top + 4)}px`;
   document.body.appendChild(effect);
-  effect.addEventListener("animationend", () => effect.remove(), { once: true });
+  if (prefersReducedMotion()) {
+    effect.remove();
+    return;
+  }
+  animateScoreEffect(effect, isNewBest);
+}
+
+function prefersReducedMotion() {
+  return window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+}
+
+function animateScoreEffect(effect, isNewBest) {
+  const duration = isNewBest ? 720 : 600;
+  const startTime = performance.now();
+  const startX = 0;
+  const startY = 0;
+  const rise = isNewBest ? 22 : 16;
+  const drift = isNewBest ? -92 : -72;
+  const scaleStart = isNewBest ? 0.68 : 0.76;
+  const scalePeak = isNewBest ? 1.28 : 1.14;
+  const scaleEnd = isNewBest ? 0.95 : 0.96;
+  const rotateStart = isNewBest ? -10 : -6;
+  const rotatePeak = isNewBest ? 6 : 2;
+
+  const easeOutCubic = (t) => 1 - Math.pow(1 - t, 3);
+
+  const step = (now) => {
+    const rawProgress = Math.min(1, (now - startTime) / duration);
+    const progress = easeOutCubic(rawProgress);
+    const scale = rawProgress < 0.4
+      ? scaleStart + (scalePeak - scaleStart) * (rawProgress / 0.4)
+      : scalePeak + (scaleEnd - scalePeak) * ((rawProgress - 0.4) / 0.6);
+    const rotation = rawProgress < 0.4
+      ? rotateStart + (rotatePeak - rotateStart) * (rawProgress / 0.4)
+      : rotatePeak * (1 - (rawProgress - 0.4) / 0.6);
+    const opacity = rawProgress < 0.12
+      ? rawProgress / 0.12
+      : rawProgress > 0.75
+        ? 1 - (rawProgress - 0.75) / 0.25
+        : 1;
+    const x = startX + drift * progress;
+    const y = startY - rise * progress;
+
+    effect.style.opacity = `${Math.max(0, Math.min(1, opacity))}`;
+    effect.style.transform = `translate3d(calc(-50% + ${x}px), ${y}px, 0) scale(${scale}) rotate(${rotation}deg)`;
+
+    if (rawProgress < 1) {
+      effect._scoreEffectFrame = requestAnimationFrame(step);
+    } else {
+      effect.remove();
+    }
+  };
+
+  effect.style.opacity = "0";
+  effect.style.transform = `translate3d(calc(-50% + 0px), ${startY}px, 0) scale(${scaleStart}) rotate(${rotateStart}deg)`;
+  effect._scoreEffectFrame = requestAnimationFrame(step);
 }
 
 function saveBestStreakIfNeeded() {
@@ -397,6 +458,7 @@ function handleMissedLesson() {
   playSound("missedLesson");
   vibrateOnMissedLesson();
   showMissedLessonEffect();
+  announceStatus("時間切れ。連続記録をリセットして次のお題に進みます。");
   renderGame();
   setTimeout(startNextLesson, GAME_SETTINGS.missedLessonEffectMs);
 }
@@ -415,6 +477,7 @@ function startNextLesson() {
   game.isInputLocked = false;
   resetMovingText();
   renderGame();
+  announceStatus(`次のお題。${lessons[game.lessonIndex].japanese}。${game.displayedRomaji} を入力してください。`);
 }
 
 function updateTextSpeed() {
@@ -431,30 +494,6 @@ function updateMovingTextPosition() {
   dom.movingText.style.transform = `translate(${game.movingTextX}px, -50%)`;
 }
 
-function updateRotateHintLayout() {
-  if (!dom.rotateHint) return;
-
-  const firstKeyboardRow = dom.keyboard.querySelector(".row");
-  const firstKey = dom.keyboard.querySelector("button.key");
-  if (!firstKeyboardRow || !firstKey) return;
-
-  const wrapRect = dom.keyboardWrap.getBoundingClientRect();
-  const firstRowRect = firstKeyboardRow.getBoundingClientRect();
-  const firstKeyRect = firstKey.getBoundingClientRect();
-  const availableHeight = Math.max(0, firstRowRect.top - wrapRect.top - 4);
-  const keyAspectRatio = firstKeyRect.height / firstKeyRect.width;
-  const isKeyTooTall = keyAspectRatio >= 1.08;
-  const hasEnoughSpace = availableHeight >= 24;
-  const shouldShow = isKeyTooTall && hasEnoughSpace;
-  const flowingTextSize = parseFloat(getComputedStyle(dom.japanese).fontSize) || 24;
-  const fontSize = Math.min(flowingTextSize * 0.9, Math.max(6, availableHeight / 5.8));
-  const hintTop = Math.max(availableHeight / 2, 10);
-
-  dom.rotateHint.style.setProperty("--rotate-hint-top", `${hintTop}px`);
-  dom.rotateHint.style.setProperty("--rotate-hint-font-size", `${fontSize}px`);
-  dom.rotateHint.style.setProperty("--rotate-hint-opacity", shouldShow ? "1" : "0");
-}
-
 function hasMovingTextReachedGoal() {
   const goalLineX = dom.textLane.clientWidth - dom.scoreMask.offsetWidth;
   const movingTextTriggerX = game.movingTextX + dom.movingText.offsetWidth * GAME_SETTINGS.goalTriggerTextRatio;
@@ -464,11 +503,13 @@ function hasMovingTextReachedGoal() {
 function startTextAnimation() {
   cancelAnimationFrame(game.animationFrameId);
   const animate = (time) => {
-    advanceMovingText(time);
-    if (hasMovingTextReachedGoal()) {
-      handleMissedLesson();
-    } else {
-      updateMovingTextPosition();
+    if (!game.isInputLocked) {
+      advanceMovingText(time);
+      if (hasMovingTextReachedGoal()) {
+        handleMissedLesson();
+      } else {
+        updateMovingTextPosition();
+      }
     }
     game.animationFrameId = requestAnimationFrame(animate);
   };
@@ -574,11 +615,10 @@ function startGame() {
   buildKeyboard();
   resetMovingText();
   renderGame();
+  announceStatus(`お題は ${lessons[game.lessonIndex].japanese}。${lessons[game.lessonIndex].displayRomaji} を入力してください。`);
   startTextAnimation();
   registerServiceWorker();
   document.addEventListener("keydown", handlePhysicalKeyboardInput);
-  window.addEventListener("resize", updateRotateHintLayout);
-  window.addEventListener("orientationchange", () => setTimeout(updateRotateHintLayout, 120));
 }
 
 startGame();
