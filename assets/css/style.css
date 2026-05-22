@@ -75,6 +75,7 @@ main {
   position: relative;
   overflow: hidden;
   min-width: 0;
+  height: clamp(44px, 12vw, 62px);
   height: clamp(44px, 12cqi, 62px);
   background: var(--color-panel-bg);
 }
@@ -99,6 +100,7 @@ main {
 }
 
 .japanese {
+  font-size: clamp(18px, 5.4vw, 30px);
   font-size: clamp(18px, 5.4cqi, 30px);
   line-height: 1;
   letter-spacing: .04em;
@@ -108,6 +110,7 @@ main {
   min-width: 0;
   overflow: hidden;
   color: var(--color-muted-romaji);
+  font-size: clamp(16px, 4.8vw, 28px);
   font-size: clamp(16px, 4.8cqi, 28px);
   letter-spacing: .1em;
   text-overflow: ellipsis;
@@ -162,6 +165,7 @@ main {
   column-gap: 1px;
   padding: 0;
   color: var(--color-text);
+  font-size: clamp(10px, 2.8vw, 13px);
   font-size: clamp(10px, 2.8cqi, 13px);
   font-weight: 800;
   line-height: 1.05;
@@ -183,7 +187,7 @@ main {
 .score-effect {
   position: fixed;
   z-index: 20;
-  will-change: transform, opacity, filter;
+  will-change: transform, opacity;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -257,7 +261,9 @@ main {
   display: flex;
   flex-direction: column;
   justify-content: center;
+  gap: clamp(4px, 1.4vw, 6px);
   gap: clamp(4px, 1.4cqi, 6px);
+  padding: clamp(4px, 1.4vw, 6px);
   padding: clamp(4px, 1.4cqi, 6px);
   overflow: hidden;
   background: var(--color-keyboard-bg);
@@ -428,10 +434,12 @@ button.key[data-key="j"] {
   }
 
   .row {
+    max-height: clamp(72px, 31vh, 150px);
     max-height: clamp(72px, 31cqi, 150px);
   }
 
   button.key {
+    font-size: clamp(24px, 10vh, 52px);
     font-size: clamp(24px, 9cqi, 52px);
   }
 }

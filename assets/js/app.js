@@ -439,7 +439,7 @@ function animateScoreEffect(effect, isNewBest) {
   };
 
   effect.style.opacity = "0";
-  effect.style.transform = `translate3d(0px, ${startY}px, 0) scale(${scaleStart}) rotate(${rotateStart}deg)`;
+  effect.style.transform = `translate3d(calc(-50% + 0px), ${startY}px, 0) scale(${scaleStart}) rotate(${rotateStart}deg)`;
   effect._scoreEffectFrame = requestAnimationFrame(step);
 }
 
